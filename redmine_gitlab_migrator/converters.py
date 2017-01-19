@@ -55,7 +55,10 @@ def convert_notes(redmine_issue_journals, redmine_user_index, issue_statuses, te
             author = None
 
         if len(journal_notes) > 0:
-            yield {'body': textile_converter.convert(journal_notes), 'created_at': created_at}, {'sudo_user': author}
+            try:
+                yield {'body': textile_converter.convert(journal_notes), 'created_at': created_at}, {'sudo_user': author}
+            except:
+                yield {'body': 'Conversion error. Please see original issue.', 'created_at': created_at}, {'sudo_user': author}
         for property in entry['details']:
             if property.get('name', '') == 'status_id':
                 current_closed = is_closed_issue(issue_statuses, property.get('new_value'))
@@ -87,7 +90,7 @@ def relations_to_string(relations, issue_id):
 # Convertor
 
 def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
-                  gitlab_milestones_index, issue_statuses, textile_converter):
+                  gitlab_milestones_index, issue_statuses, textile_converter, redmine_url):
     relations = redmine_issue.get('relations', [])
     relations_text = relations_to_string(relations, redmine_issue['id'])
     if len(relations_text) > 0:
@@ -96,9 +99,11 @@ def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
     data = {
         'iid': redmine_issue['id'],
         'title': redmine_issue['subject'],
-        'description': '{}\n\n{}'.format(
+        'description': '{}\n\n{}\n\n{}/issues/{}'.format(
             textile_converter.convert(redmine_issue['description']),
-            relations_text
+            relations_text,
+            redmine_url,
+            redmine_issue['id']
         ),
         'created_at': redmine_issue['created_on'],
         'labels': redmine_issue['tracker']['name'] + ',' + redmine_issue['priority']['name'] + ',' + redmine_issue['status']['name']

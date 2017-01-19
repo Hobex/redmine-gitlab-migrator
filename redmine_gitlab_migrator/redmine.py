@@ -81,7 +81,7 @@ class RedmineProject(Project):
     def get_all_issues(self):
         if self.issue_cache is None:
             issues = self.api.unpaginated_get(
-                '{}/issues.json?status_id=*'.format(self.public_url))
+                '{}/issues.json?status_id=*&sort=created_on:desc'.format(self.public_url))
             detailed_issues = []
             # It's impossible to get issue history from list view, so get it from
             # detail view...
@@ -102,6 +102,9 @@ class RedmineProject(Project):
     def get_page(self, title, version):
         return self.api.get(
             '{}/wiki/{}/{}.json'.format(self.public_url, title, version))
+
+    def get_base_url(self):
+        return '{}'.format(self.instance_url)
 
     def get_participants(self):
         """Get participating users (issues authors/owners)

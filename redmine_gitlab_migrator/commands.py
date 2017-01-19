@@ -229,7 +229,7 @@ def perform_migrate_issues(args):
     textile_converter = TextileConverter()
     issues_data = (
         convert_issue(
-            i, redmine_users_index, gitlab_users_index, milestones_index, issues_statuses, textile_converter)
+            i, redmine_users_index, gitlab_users_index, milestones_index, issues_statuses, textile_converter, redmine_project.get_base_url())
         for i in issues)
 
     updated_users = gitlab_instance.update_users_to_admin(map_users(redmine_project))

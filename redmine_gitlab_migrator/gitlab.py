@@ -114,7 +114,7 @@ class GitlabInstance:
         pass
 
     def make_admin(self, user, is_admin):
-        return self.api.put('{}/users/{}?admin={}'.format(self.url, user['id'], 'true' if is_admin else 'false'), {})
+        return self.api.put('{}/users/{}?admin={}'.format(self.url, user['id'], 'true' if is_admin else 'false'), data={})
 
 class GitlabProject(Project):
     REGEX_PROJECT_URL = re.compile(
@@ -163,11 +163,13 @@ class GitlabProject(Project):
                 }
                 self.api.put(issue_url, data=altered_issue)
             else:
-                altered_note = note_data.copy()
-                altered_note['sudo'] = note_meta['sudo_user']
-                self.api.post(
-                    issue_notes_url, data=altered_note)
-
+                try:
+                    altered_note = note_data.copy()
+                    altered_note['sudo'] = note_meta['sudo_user']
+                    self.api.post(
+                        issue_notes_url, data=altered_note)
+                except:
+                    pass
         # Handle closed status
         if not issue_closed and meta['must_close']:
             altered_issue = {
