@@ -154,14 +154,17 @@ class GitlabProject(Project):
         for note_data, note_meta in meta['notes']:
             if note_meta.get('must_close', False):
                 issue_closed = True
-                altered_issue = {
-                    'id': issue['project_id'],
-                    'issue_id': issue['id'],
-                    'updated_at': note_data['updated_at'],
-                    'state_event': note_data['state_event'],
-                    'sudo': note_meta['sudo_user']
-                }
-                self.api.put(issue_url, data=altered_issue)
+                try:
+                    altered_issue = {
+                        'id': issue['project_id'],
+                        'issue_id': issue['id'],
+                        'updated_at': note_data['updated_at'],
+                        'state_event': note_data['state_event'],
+                        'sudo': note_meta['sudo_user']
+                    }
+                    self.api.put(issue_url, data=altered_issue)
+                except:
+                    pass
             else:
                 try:
                     altered_note = note_data.copy()

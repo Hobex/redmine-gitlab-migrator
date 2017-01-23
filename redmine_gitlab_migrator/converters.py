@@ -96,6 +96,14 @@ def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
     if len(relations_text) > 0:
         relations_text = ', ' + relations_text
 
+    labels = redmine_issue['tracker']['name'] + ',' + redmine_issue['status']['name']
+
+    # category is optional
+    try:
+        labels += ',' + redmine_issue['category']['name']
+    except:
+        pass
+
     data = {
         'iid': redmine_issue['id'],
         'title': redmine_issue['subject'],
@@ -106,7 +114,7 @@ def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
             redmine_issue['id']
         ),
         'created_at': redmine_issue['created_on'],
-        'labels': redmine_issue['tracker']['name'] + ',' + redmine_issue['priority']['name'] + ',' + redmine_issue['status']['name']
+        'labels': labels
     }
 
     version = redmine_issue.get('fixed_version', None)

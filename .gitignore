@@ -147,3 +147,6 @@ fabric.properties
 
 .env/
 .idea/
+
+# Log files
+migration.log

@@ -81,7 +81,7 @@ class RedmineProject(Project):
     def get_all_issues(self):
         if self.issue_cache is None:
             issues = self.api.unpaginated_get(
-                '{}/issues.json?status_id=*&sort=created_on:desc'.format(self.public_url))
+                '{}/issues.json?status_id=open&sort=created_on:asc'.format(self.public_url))
             detailed_issues = []
             # It's impossible to get issue history from list view, so get it from
             # detail view...

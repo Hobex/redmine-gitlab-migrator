@@ -250,9 +250,14 @@ def perform_migrate_issues(args):
                 data['title'],
                 len(meta['notes'])))
         else:
-            created = gitlab_project.create_issue(data, meta)
-            log.info('#{iid} {title}'.format(**created))
-
+            try:
+                created = gitlab_project.create_issue(data, meta)
+                log.info('#{iid} {title} created'.format(**created))
+            except:
+                with open('migration.log', 'a') as f:
+                        f.write('#{} - {} failed. Closed: {}\n'.format(data['iid'], data['title'], meta['must_close']))
+                log.error('Migration of issue #{} {} failed!'.format(data['iid'], data['title']))
+                pass ## this happens sometimes, i don't know why, but proceed
     gitlab_instance.downgrade_users_from_admin(updated_users)
 
 
