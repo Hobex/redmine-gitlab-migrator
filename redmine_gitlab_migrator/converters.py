@@ -104,11 +104,17 @@ def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
     except:
         pass
 
+    description = "see title"
+    try:
+        description = textile_converter.convert(redmine_issue['description'])
+    except:
+        pass
+
     data = {
         'iid': redmine_issue['id'],
         'title': redmine_issue['subject'],
         'description': '{}\n\n{}\n\n{}/issues/{}'.format(
-            textile_converter.convert(redmine_issue['description']),
+            description,
             relations_text,
             redmine_url,
             redmine_issue['id']
